@@ -3,7 +3,7 @@ Go library that talks with Jenkins API
 
 #### Install
 
-`go get github.com/Medisafe/jenkins-api/jenkins`
+`go get github.com/medisafe/jenkins-api/jenkins`
 
 #### Usage 
 
