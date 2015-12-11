@@ -153,8 +153,6 @@ func (job *Job) GetTestResults() (*TestResult, error) {
 	return nil, JenkinsApiError{ What: "No tests results for this job" }
 }
 
-
-
 // Custom error
 type JenkinsApiError struct {
 	What string
