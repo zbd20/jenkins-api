@@ -143,6 +143,18 @@ func (job *Job) GetUpstreamJob() (*UpstreamJob, error) {
 	return nil, JenkinsApiError{ What: "Upstream job wasn't found for this job, maybe user triggered this job" }
 }
 
+// The job can run tests part of the script. Get the tests count summary.
+func (job *Job) GetTestResults() (*TestResult, error) {
+	for _, action := range job.Actions {
+		if action.TestResult.TotalCount > 0 {
+			return &action.TestResult, nil
+		}
+	}
+	return nil, JenkinsApiError{ What: "No tests results for this job" }
+}
+
+
+
 // Custom error
 type JenkinsApiError struct {
 	What string
