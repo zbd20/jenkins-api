@@ -1,7 +1,11 @@
 # jenkins-api
 Go library that talks with Jenkins API
 
-#### Usage
+#### Install
+
+`go get github.com/Medisafe/jenkins-api/jenkins`
+
+#### Usage 
 
 Initialize api connection
 ``` Go
@@ -27,3 +31,5 @@ Get param values by param name
 ``` Go
 branchName, _ := job.GetParamString("branch")
 ```
+
+[Documentation](https://godoc.org/github.com/Medisafe/jenkins-api/jenkins)
