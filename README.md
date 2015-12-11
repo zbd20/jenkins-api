@@ -32,4 +32,4 @@ Get param values by param name
 branchName, _ := job.GetParamString("branch")
 ```
 
-[Documentation](https://godoc.org/github.com/Medisafe/jenkins-api/jenkins)
+[Documentation](https://godoc.org/github.com/medisafe/jenkins-api/jenkins)
