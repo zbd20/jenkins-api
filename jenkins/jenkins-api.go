@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"encoding/json"
 	"fmt"
-	"log"
 )
 
 // Initialize Jenkins API
@@ -17,43 +16,38 @@ func Init(connection *Connection) *JenkinsApi {
 }
 
 // Get job of specific project and by job number
-func (jenkinsApi *JenkinsApi) GetJob(project string, num int) *Job {
+func (jenkinsApi *JenkinsApi) GetJob(project string, num int) (*Job, error) {
 
 	// build endpoint url
 	url := fmt.Sprintf("%v/job/%v/%v/api/json", jenkinsApi.connection.BaseUrl, project, num)
 	r, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		log.Fatal(err)
-		return nil
+		return nil, err
 	}
 
 	r.SetBasicAuth(jenkinsApi.connection.Username, jenkinsApi.connection.AccessToken)
 	resp, err := jenkinsApi.client.Do(r)
 	if err != nil {
-		log.Fatal(err)
-		return nil
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode == 401 {
-		log.Fatal("status: 401")
-		return nil
+		return nil, JenkinsApiError{ What: fmt.Sprintf("Status code: %v", resp.StatusCode) }
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal(err)
-		return nil
+		return nil, err
 	}
 
 	job := new(Job)
 	err = json.Unmarshal(body, &job)
 	if err != nil {
-		log.Fatal(err)
-		return nil
+		return nil, err
 	}
 
-	return job
+	return job, nil
 }
 
 // Get parameter of string type
@@ -151,6 +145,43 @@ func (job *Job) GetTestResults() (*TestResult, error) {
 		}
 	}
 	return nil, JenkinsApiError{ What: "No tests results for this job" }
+}
+
+// Start jenkins job and pass params.
+func (jenkinsApi *JenkinsApi) StartJob(project string, params map[string]interface{}) error {
+
+	parameters := &Parameters{}
+	if params != nil && len(params) > 0 {
+		for k := range params {
+			parameters.Params = append(parameters.Params, Parameter{ Name: k, Value: params[k]})
+		}
+	}
+
+	var jsonStr string
+	if len(parameters.Params) > 0 {
+		jsonbts, _ := json.Marshal(parameters)
+		jsonStr = string(jsonbts)
+	}
+
+	// build endpoint url
+	url := fmt.Sprintf("%v/job/%v/build?json=%v", jenkinsApi.connection.BaseUrl, project, jsonStr)
+	r, err := http.NewRequest("POST", url, nil)
+	if err != nil {
+		return err
+	}
+
+	r.SetBasicAuth(jenkinsApi.connection.Username, jenkinsApi.connection.AccessToken)
+	resp, err := jenkinsApi.client.Do(r)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == 401 {
+		return JenkinsApiError{ What: fmt.Sprintf("Status code: %v", resp.StatusCode) }
+	}
+
+	return nil
 }
 
 // Custom error

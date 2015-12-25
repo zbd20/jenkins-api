@@ -72,3 +72,7 @@ type Parameter struct {
 	Name  string `json:"name"`
 	Value interface{} `json:"value"`
 }
+
+type Parameters struct {
+	Params []Parameter `json:"parameter"`
+}
