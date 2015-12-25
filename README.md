@@ -7,7 +7,7 @@ Go library that talks with Jenkins API
 
 #### Usage 
 
-Initialize api connection
+##### Initialize api connection
 ``` Go
 jenkinsApi := Init(&Connection{
 	Username: "sromku",
@@ -16,20 +16,39 @@ jenkinsApi := Init(&Connection{
 })
 ```
 
-Get job (for example, job number 196 of project called `alpha`)
+##### Get job 
+
+For example, job number 196 of project called `android-mobile`
 ``` Go
-job := jenkinsApi.GetJob("alpha", 196)
+job := jenkinsApi.GetJob("android-mobile", 196)
 ```
 
-Get user or upstream job that triggered the job
+##### Start job (new build)
+
+With params:
 ``` Go
-user, _ := job.GetUser()
-upstream, _ := job.GetUpstreamJob()
+jenkinsApi.StartJob("android-mobile", map[string]interface{} {
+	"branch" : "master",
+	"build" : "staging",
+})
 ```
 
-Get param values by param name
-``` Go
-branchName, _ := job.GetParamString("branch")
-```
+##### Job details
+
+- Get user that triggered the job: 
+
+	`user, err := job.GetUser()`
+
+- Get upstream job that triggered the job: 
+
+	`upstream, err := job.GetUpstreamJob()`
+
+- Get param values by param name: 
+
+	`branchName, _ := job.GetParamString("branch")`
+
+- Get tests results:
+
+	``
 
 [Documentation](https://godoc.org/github.com/medisafe/jenkins-api/jenkins)
