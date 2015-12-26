@@ -99,6 +99,10 @@ type Job struct {
 }
 
 type HealthReport struct {
-	Description string
-	Score int
+	Description string `json:"description"`
+	Score int `json:"score"`
+}
+
+type View struct{
+	Jobs []Job `json:"jobs"`
 }

@@ -191,6 +191,24 @@ func (jenkinsApi *JenkinsApi) GetJob(jobName string) (*Job, error) {
 	return job, nil
 }
 
+// Get all defined jobs
+func (jenkinsApi *JenkinsApi) GetJobs() ([]Job, error) {
+	var view View
+
+	url := fmt.Sprintf("%v/view/All/api/json", jenkinsApi.connection.BaseUrl)
+	body, err := jenkinsApi.get(url)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(body, &view)
+	if err != nil {
+		return nil, err
+	}
+
+	return view.Jobs, nil
+}
+
 func (jenkinsApi *JenkinsApi) get(url string) ([]byte, error) {
 	r, err := http.NewRequest("GET", url, nil)
 	if err != nil {

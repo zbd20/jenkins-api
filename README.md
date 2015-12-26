@@ -16,6 +16,12 @@ jenkinsApi := Init(&Connection{
 })
 ```
 
+##### Get all jobs
+
+``` Go
+jobs, err := jenkinsApi.GetJobs()
+```
+
 ##### Get job
 
 ``` Go
