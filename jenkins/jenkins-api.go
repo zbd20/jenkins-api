@@ -26,9 +26,6 @@ func Init(connection *Connection) *JenkinsApi {
 }
 
 // Get build of specific job
-//
-// For example, job number 196 of project called android-mobile:
-//  job := jenkinsApi.GetJob("android-mobile", 196)
 func (jenkinsApi *JenkinsApi) GetBuild(jobName string, num int) (*Build, error) {
 
 	// build endpoint url
@@ -48,9 +45,6 @@ func (jenkinsApi *JenkinsApi) GetBuild(jobName string, num int) (*Build, error) 
 }
 
 // Get parameter of string type
-//
-// For example:
-//  branchName, _ := job.GetParamString("branch")
 func (build *Build) GetParamString(name string) (string, error) {
 	for _, action := range build.Actions {
 		params := action.Parameters
@@ -108,7 +102,6 @@ func (build *Build) GetParamBool(name string) (bool, error) {
 }
 
 // Get user that triggered this build
-//  user, err := job.GetUser()
 func (build *Build) GetUser() (*User, error) {
 	for _, action := range build.Actions {
 		causes := action.Causes
@@ -124,7 +117,6 @@ func (build *Build) GetUser() (*User, error) {
 }
 
 // Get upstream job that triggered this build
-//  upstream, err := job.GetUpstreamJob()
 func (build *Build) GetUpstreamJob() (*UpstreamJob, error) {
 	for _, action := range build.Actions {
 		causes := action.Causes
@@ -140,7 +132,6 @@ func (build *Build) GetUpstreamJob() (*UpstreamJob, error) {
 }
 
 // The job can run tests part of the script. Get the tests count summary
-//  testResults, err := build.GetTestResults()
 func (build *Build) GetTestResults() (*TestResult, error) {
 	for _, action := range build.Actions {
 		if action.TestResult.TotalCount > 0 {
@@ -183,7 +174,6 @@ func (jenkinsApi *JenkinsApi) StartBuild(job string, params map[string]interface
 }
 
 // Get job details
-//  job, err := jenkinsApi.GetJob("android-mobile")
 func (jenkinsApi *JenkinsApi) GetJob(jobName string) (*Job, error) {
 	// build endpoint url
 	url := fmt.Sprintf("%v/job/%v/api/json", jenkinsApi.connection.BaseUrl, jobName)
