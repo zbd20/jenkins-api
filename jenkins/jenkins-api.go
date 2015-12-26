@@ -1,3 +1,6 @@
+// Go library that talks with Jenkins API.
+//
+// Author: sromku
 package jenkins
 
 import (
@@ -8,6 +11,13 @@ import (
 )
 
 // Initialize Jenkins API
+//
+// For example:
+//  jenkinsApi := Init(&Connection {
+//    Username: "sromku",
+//    AccessToken: "001122334455667788",
+//    BaseUrl: "http://jenkins.sample.com:8080",
+//  })
 func Init(connection *Connection) *JenkinsApi {
 	jenkinsApi := new(JenkinsApi)
 	jenkinsApi.connection = connection
@@ -15,11 +25,14 @@ func Init(connection *Connection) *JenkinsApi {
 	return jenkinsApi
 }
 
-// Get job of specific project and by job number
-func (jenkinsApi *JenkinsApi) GetBuild(project string, num int) (*Build, error) {
+// Get build of specific job
+//
+// For example, job number 196 of project called android-mobile:
+//  job := jenkinsApi.GetJob("android-mobile", 196)
+func (jenkinsApi *JenkinsApi) GetBuild(jobName string, num int) (*Build, error) {
 
 	// build endpoint url
-	url := fmt.Sprintf("%v/job/%v/%v/api/json", jenkinsApi.connection.BaseUrl, project, num)
+	url := fmt.Sprintf("%v/job/%v/%v/api/json", jenkinsApi.connection.BaseUrl, jobName, num)
 	body, err := jenkinsApi.get(url)
 	if err != nil {
 		return nil, err
@@ -35,6 +48,9 @@ func (jenkinsApi *JenkinsApi) GetBuild(project string, num int) (*Build, error) 
 }
 
 // Get parameter of string type
+//
+// For example:
+//  branchName, _ := job.GetParamString("branch")
 func (build *Build) GetParamString(name string) (string, error) {
 	for _, action := range build.Actions {
 		params := action.Parameters
@@ -91,7 +107,8 @@ func (build *Build) GetParamBool(name string) (bool, error) {
 	return false, JenkinsApiError{ What: fmt.Sprintf("Param '%v' wasn't found", name) }
 }
 
-// Get user that triggered this job
+// Get user that triggered this build
+//  user, err := job.GetUser()
 func (build *Build) GetUser() (*User, error) {
 	for _, action := range build.Actions {
 		causes := action.Causes
@@ -106,7 +123,8 @@ func (build *Build) GetUser() (*User, error) {
 	return nil, JenkinsApiError{ What: "User wasn't found for this job, maybe upstream job triggered this job" }
 }
 
-// Get upstream job that triggered this job
+// Get upstream job that triggered this build
+//  upstream, err := job.GetUpstreamJob()
 func (build *Build) GetUpstreamJob() (*UpstreamJob, error) {
 	for _, action := range build.Actions {
 		causes := action.Causes
@@ -121,7 +139,8 @@ func (build *Build) GetUpstreamJob() (*UpstreamJob, error) {
 	return nil, JenkinsApiError{ What: "Upstream job wasn't found for this job, maybe user triggered this job" }
 }
 
-// The job can run tests part of the script. Get the tests count summary.
+// The job can run tests part of the script. Get the tests count summary
+//  testResults, err := build.GetTestResults()
 func (build *Build) GetTestResults() (*TestResult, error) {
 	for _, action := range build.Actions {
 		if action.TestResult.TotalCount > 0 {
@@ -132,6 +151,12 @@ func (build *Build) GetTestResults() (*TestResult, error) {
 }
 
 // Start jenkins build and pass params.
+//
+// For example, start new build with two params:
+//  jenkinsApi.StartBuild("android-mobile", map[string]interface{} {
+//    "branch" : "master",
+//    "build" : "staging",
+//  })
 func (jenkinsApi *JenkinsApi) StartBuild(job string, params map[string]interface{}) error {
 
 	parameters := &Parameters{}
@@ -157,6 +182,8 @@ func (jenkinsApi *JenkinsApi) StartBuild(job string, params map[string]interface
 	return nil
 }
 
+// Get job details
+//  job, err := jenkinsApi.GetJob("android-mobile")
 func (jenkinsApi *JenkinsApi) GetJob(jobName string) (*Job, error) {
 	// build endpoint url
 	url := fmt.Sprintf("%v/job/%v/api/json", jenkinsApi.connection.BaseUrl, jobName)
