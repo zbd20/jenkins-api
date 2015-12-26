@@ -1,5 +1,6 @@
 # jenkins-api
-Go library that talks with Jenkins API
+Go library that talks with Jenkins API.
+Supports AppEngine as well.
 
 #### Install
 
@@ -62,5 +63,22 @@ jenkinsApi.StartBuild("android-mobile", map[string]interface{} {
 - Get tests results:
 
 	`testResults, err := build.GetTestResults()`
+
+
+#### For AppEngine users
+
+Initialize and continue as usual
+
+``` Go
+c := appengine.NewContext(r)
+client := urlfetch.Client(c)
+
+jenkinsApi := Init(&Connection{
+	Username: "sromku",
+	AccessToken: "001122334455667788",
+	BaseUrl: "http://jenkins.sample.com:8080",
+	Http: client,
+})
+```
 
 [Documentation](https://godoc.org/github.com/medisafe/jenkins-api/jenkins)

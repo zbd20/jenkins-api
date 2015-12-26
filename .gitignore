@@ -1,4 +1,4 @@
-bin
 jenkins-api
 .idea
 main.go
+app.yaml

@@ -8,6 +8,7 @@ type Connection struct {
 	Username    string
 	AccessToken string
 	BaseUrl     string
+	Http        *http.Client
 }
 
 type JenkinsApi struct {
@@ -51,14 +52,14 @@ type Cause struct {
 }
 
 type User struct {
-	UserId           string `json:"userId"`
-	UserName         string `json:"userName"`
+	UserId   string `json:"userId"`
+	UserName string `json:"userName"`
 }
 
 type UpstreamJob struct {
-	UpstreamBuild    int `json:"upstreamBuild"`
-	UpstreamProject  string `json:"upstreamProject"`
-	UpstreamUrl      string `json:"upstreamUrl"`
+	UpstreamBuild   int `json:"upstreamBuild"`
+	UpstreamProject string `json:"upstreamProject"`
+	UpstreamUrl     string `json:"upstreamUrl"`
 }
 
 type TestResult struct {
@@ -78,31 +79,31 @@ type Parameters struct {
 }
 
 type Job struct {
-	Description string `json:"description"`
-	DisplayName string `json:"displayName"`
-	Name string `json:"name"`
-	Url string `json:"url"`
-	Buildable bool `json:"buildable"`
-	Builds []Build `json:"builds"`
-	Color string `json:"color"`
-	HealthReport []HealthReport `json:"healthReport"`
-	InQueue bool `json:"inQueue"`
-	FirstBuild Build `json:"color"`
-	LastBuild Build `json:"lastBuild"`
-	LastCompletedBuild Build `json:"lastCompletedBuild"`
-	LastFailedBuild Build `json:"lastFailedBuild"`
-	LastStableBuild Build `json:"lastStableBuild"`
-	LastSuccessfulBuild Build `json:"lastSuccessfulBuild"`
-	LastUnstableBuild Build `json:"lastUnstableBuild"`
+	Description           string `json:"description"`
+	DisplayName           string `json:"displayName"`
+	Name                  string `json:"name"`
+	Url                   string `json:"url"`
+	Buildable             bool `json:"buildable"`
+	Builds                []Build `json:"builds"`
+	Color                 string `json:"color"`
+	HealthReport          []HealthReport `json:"healthReport"`
+	InQueue               bool `json:"inQueue"`
+	FirstBuild            Build `json:"color"`
+	LastBuild             Build `json:"lastBuild"`
+	LastCompletedBuild    Build `json:"lastCompletedBuild"`
+	LastFailedBuild       Build `json:"lastFailedBuild"`
+	LastStableBuild       Build `json:"lastStableBuild"`
+	LastSuccessfulBuild   Build `json:"lastSuccessfulBuild"`
+	LastUnstableBuild     Build `json:"lastUnstableBuild"`
 	LastUnsuccessfulBuild Build `json:"lastUnsuccessfulBuild"`
-	NextBuildNumber int `json:"nextBuildNumber"`
+	NextBuildNumber       int `json:"nextBuildNumber"`
 }
 
 type HealthReport struct {
 	Description string `json:"description"`
-	Score int `json:"score"`
+	Score       int `json:"score"`
 }
 
-type View struct{
+type View struct {
 	Jobs []Job `json:"jobs"`
 }
