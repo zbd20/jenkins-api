@@ -20,23 +20,7 @@ func (jenkinsApi *JenkinsApi) GetBuild(project string, num int) (*Build, error) 
 
 	// build endpoint url
 	url := fmt.Sprintf("%v/job/%v/%v/api/json", jenkinsApi.connection.BaseUrl, project, num)
-	r, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	r.SetBasicAuth(jenkinsApi.connection.Username, jenkinsApi.connection.AccessToken)
-	resp, err := jenkinsApi.client.Do(r)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == 401 {
-		return nil, JenkinsApiError{ What: fmt.Sprintf("Status code: %v", resp.StatusCode) }
-	}
-
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := jenkinsApi.get(url)
 	if err != nil {
 		return nil, err
 	}
@@ -165,20 +149,9 @@ func (jenkinsApi *JenkinsApi) StartBuild(job string, params map[string]interface
 
 	// build endpoint url
 	url := fmt.Sprintf("%v/job/%v/build?json=%v", jenkinsApi.connection.BaseUrl, job, buildStr)
-	r, err := http.NewRequest("POST", url, nil)
+	err := jenkinsApi.post(url)
 	if err != nil {
 		return err
-	}
-
-	r.SetBasicAuth(jenkinsApi.connection.Username, jenkinsApi.connection.AccessToken)
-	resp, err := jenkinsApi.client.Do(r)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == 401 {
-		return JenkinsApiError{ What: fmt.Sprintf("Status code: %v", resp.StatusCode) }
 	}
 
 	return nil
@@ -187,6 +160,21 @@ func (jenkinsApi *JenkinsApi) StartBuild(job string, params map[string]interface
 func (jenkinsApi *JenkinsApi) GetJob(jobName string) (*Job, error) {
 	// build endpoint url
 	url := fmt.Sprintf("%v/job/%v/api/json", jenkinsApi.connection.BaseUrl, jobName)
+	body, err := jenkinsApi.get(url)
+	if err != nil {
+		return nil, err
+	}
+
+	job := new(Job)
+	err = json.Unmarshal(body, &job)
+	if err != nil {
+		return nil, err
+	}
+
+	return job, nil
+}
+
+func (jenkinsApi *JenkinsApi) get(url string) ([]byte, error) {
 	r, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -208,13 +196,27 @@ func (jenkinsApi *JenkinsApi) GetJob(jobName string) (*Job, error) {
 		return nil, err
 	}
 
-	job := new(Job)
-	err = json.Unmarshal(body, &job)
+	return body, nil
+}
+
+func (jenkinsApi *JenkinsApi) post(url string) error {
+	r, err := http.NewRequest("POST", url, nil)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return job, nil
+	r.SetBasicAuth(jenkinsApi.connection.Username, jenkinsApi.connection.AccessToken)
+	resp, err := jenkinsApi.client.Do(r)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == 401 {
+		return JenkinsApiError{ What: fmt.Sprintf("Status code: %v", resp.StatusCode) }
+	}
+
+	return nil
 }
 
 // Custom error
