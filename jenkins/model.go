@@ -15,7 +15,7 @@ type JenkinsApi struct {
 	client     *http.Client
 }
 
-type Job struct {
+type Build struct {
 	Id                string `json:"id"`
 	Number            int `json:"number"`
 	Result            string `json:"result"`
@@ -75,4 +75,30 @@ type Parameter struct {
 
 type Parameters struct {
 	Params []Parameter `json:"parameter"`
+}
+
+type Job struct {
+	Description string `json:"description"`
+	DisplayName string `json:"displayName"`
+	Name string `json:"name"`
+	Url string `json:"url"`
+	Buildable bool `json:"buildable"`
+	Builds []Build `json:"builds"`
+	Color string `json:"color"`
+	HealthReport []HealthReport `json:"healthReport"`
+	InQueue bool `json:"inQueue"`
+	FirstBuild Build `json:"color"`
+	LastBuild Build `json:"lastBuild"`
+	LastCompletedBuild Build `json:"lastCompletedBuild"`
+	LastFailedBuild Build `json:"lastFailedBuild"`
+	LastStableBuild Build `json:"lastStableBuild"`
+	LastSuccessfulBuild Build `json:"lastSuccessfulBuild"`
+	LastUnstableBuild Build `json:"lastUnstableBuild"`
+	LastUnsuccessfulBuild Build `json:"lastUnsuccessfulBuild"`
+	NextBuildNumber int `json:"nextBuildNumber"`
+}
+
+type HealthReport struct {
+	Description string
+	Score int
 }

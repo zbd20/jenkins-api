@@ -16,39 +16,45 @@ jenkinsApi := Init(&Connection{
 })
 ```
 
-##### Get job 
+##### Get job
 
-For example, job number 196 of project called `android-mobile`
 ``` Go
-job := jenkinsApi.GetJob("android-mobile", 196)
+job, err := jenkinsApi.GetJob("android-mobile")
 ```
 
-##### Start job (new build)
+##### Get build 
+
+For example, build number 196 of job called `android-mobile`
+``` Go
+build, err := jenkinsApi.GetBuild("android-mobile", 196)
+```
+
+##### Start new build
 
 With params:
 ``` Go
-jenkinsApi.StartJob("android-mobile", map[string]interface{} {
+jenkinsApi.StartBuild("android-mobile", map[string]interface{} {
 	"branch" : "master",
 	"build" : "staging",
 })
 ```
 
-##### Job details
+##### Build details
 
-- Get user that triggered the job: 
+- Get user that triggered the build: 
 
-	`user, err := job.GetUser()`
+	`user, err := build.GetUser()`
 
-- Get upstream job that triggered the job: 
+- Get upstream job that triggered the build: 
 
-	`upstream, err := job.GetUpstreamJob()`
+	`upstream, err := build.GetUpstreamJob()`
 
 - Get param values by param name: 
 
-	`branchName, _ := job.GetParamString("branch")`
+	`branchName, err := build.GetParamString("branch")`
 
 - Get tests results:
 
-	``
+	`testResults, err := build.GetTestResults()`
 
 [Documentation](https://godoc.org/github.com/medisafe/jenkins-api/jenkins)
