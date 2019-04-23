@@ -5,10 +5,10 @@
 package jenkins
 
 import (
-	"net/http"
-	"io/ioutil"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 )
 
 // Initialize Jenkins API
@@ -59,13 +59,13 @@ func (build *Build) GetParamString(name string) (string, error) {
 					if val, ok := param.Value.(string); ok {
 						return val, nil
 					} else {
-						return "", JenkinsApiError{What: fmt.Sprintf("The value of '%v' isn't of string type", name) }
+						return "", JenkinsApiError{What: fmt.Sprintf("The value of '%v' isn't of string type", name)}
 					}
 				}
 			}
 		}
 	}
-	return "", JenkinsApiError{What: fmt.Sprintf("Param '%v' wasn't found", name) }
+	return "", JenkinsApiError{What: fmt.Sprintf("Param '%v' wasn't found", name)}
 }
 
 // Get parameter of int type
@@ -78,13 +78,13 @@ func (build *Build) GetParamInt(name string) (int, error) {
 					if val, ok := param.Value.(int); ok {
 						return val, nil
 					} else {
-						return 0, JenkinsApiError{What: fmt.Sprintf("The value of '%v' isn't of int type", name) }
+						return 0, JenkinsApiError{What: fmt.Sprintf("The value of '%v' isn't of int type", name)}
 					}
 				}
 			}
 		}
 	}
-	return 0, JenkinsApiError{What: fmt.Sprintf("Param '%v' wasn't found", name) }
+	return 0, JenkinsApiError{What: fmt.Sprintf("Param '%v' wasn't found", name)}
 }
 
 // Get parameter of bool type
@@ -97,13 +97,13 @@ func (build *Build) GetParamBool(name string) (bool, error) {
 					if val, ok := param.Value.(bool); ok {
 						return val, nil
 					} else {
-						return false, JenkinsApiError{What: fmt.Sprintf("The value of '%v' isn't of bool type", name) }
+						return false, JenkinsApiError{What: fmt.Sprintf("The value of '%v' isn't of bool type", name)}
 					}
 				}
 			}
 		}
 	}
-	return false, JenkinsApiError{What: fmt.Sprintf("Param '%v' wasn't found", name) }
+	return false, JenkinsApiError{What: fmt.Sprintf("Param '%v' wasn't found", name)}
 }
 
 // Get user that triggered this build
@@ -118,7 +118,7 @@ func (build *Build) GetUser() (*User, error) {
 			}
 		}
 	}
-	return nil, JenkinsApiError{What: "User wasn't found for this job, maybe upstream job triggered this job" }
+	return nil, JenkinsApiError{What: "User wasn't found for this job, maybe upstream job triggered this job"}
 }
 
 // Get upstream job that triggered this build
@@ -133,7 +133,7 @@ func (build *Build) GetUpstreamJob() (*UpstreamJob, error) {
 			}
 		}
 	}
-	return nil, JenkinsApiError{What: "Upstream job wasn't found for this job, maybe user triggered this job" }
+	return nil, JenkinsApiError{What: "Upstream job wasn't found for this job, maybe user triggered this job"}
 }
 
 // The job can run tests part of the script. Get the tests count summary
@@ -143,7 +143,7 @@ func (build *Build) GetTestResults() (*TestResult, error) {
 			return &action.TestResult, nil
 		}
 	}
-	return nil, JenkinsApiError{What: "No tests results for this job" }
+	return nil, JenkinsApiError{What: "No tests results for this job"}
 }
 
 // Start jenkins build and pass params.
@@ -197,10 +197,10 @@ func (jenkinsApi *JenkinsApi) GetJob(jobName string) (*Job, error) {
 }
 
 // Get all defined jobs
-func (jenkinsApi *JenkinsApi) GetJobs() ([]Job, error) {
+func (jenkinsApi *JenkinsApi) GetJobs(viewName string) ([]Job, error) {
 	var view View
 
-	url := fmt.Sprintf("%v/view/All/api/json", jenkinsApi.connection.BaseUrl)
+	url := fmt.Sprintf("%v/view/%v/api/json", jenkinsApi.connection.BaseUrl, viewName)
 	body, err := jenkinsApi.get(url)
 	if err != nil {
 		return nil, err
@@ -228,7 +228,7 @@ func (jenkinsApi *JenkinsApi) get(url string) ([]byte, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == 401 {
-		return nil, JenkinsApiError{What: fmt.Sprintf("Status code: %v", resp.StatusCode) }
+		return nil, JenkinsApiError{What: fmt.Sprintf("Status code: %v", resp.StatusCode)}
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -253,7 +253,7 @@ func (jenkinsApi *JenkinsApi) post(url string) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == 401 {
-		return JenkinsApiError{What: fmt.Sprintf("Status code: %v", resp.StatusCode) }
+		return JenkinsApiError{What: fmt.Sprintf("Status code: %v", resp.StatusCode)}
 	}
 
 	return nil
